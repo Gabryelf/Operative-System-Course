@@ -3,29 +3,48 @@ import tkinter as tk
 root = tk.Tk()
 
 root.geometry('500x500')
-root.iconbitmap('../assets/icon.ico')
 root.title('КАЛЬКУЛЯТОР ТОП')
 
-def insert_value():
-    pass
+def insert_value(button):
+    number = button.config("text")
+    print(number)
 
 def init():
-    frame_top = tk.Frame(root, width=500, height=100, background='grey')
-    frame_bottom_left = tk.Frame(root, width=350, height=100, background='grey')
-    frame_bottom_right = tk.Frame(root, width=150, height=100, background='grey')
-    return [frame_top.pack(side="top"), frame_bottom_left, frame_bottom_right.pack(side="right")]
+    frame_root = tk.Frame(root, width=500, height=500, background='black')
+    frame_root.pack()
+    frame_top = tk.Frame(frame_root, width=500, height=100, background='grey')
+    frame_bottom_left = tk.Frame(frame_root, width=350, height=100, background='grey')
+    frame_bottom_right = tk.Frame(frame_root, width=150, height=100, background='grey')
+    return [frame_top, frame_bottom_left, frame_bottom_right]
 
 def gui():
-    frame_bottom_left= init()
-    frame_bottom_left[1].pack(side="left", padx=15, pady=15)
+    frames= init()
+    frames[0].pack(side="top", padx=25, pady=15)
+    frames[1].pack(side="left", padx=25, pady=15)
+    frames[2].pack(side="right", padx=25, pady=15)
     col = 0
     row = 0
     for button in range(10):
-        button = tk.Button(frame_bottom_left[1], text=button, width=10, height=5, command=insert_value)
-        button.grid(column=col, row=row)
+        b = tk.Button(frames[1], text=button, width=10, height=5, command=insert_value)
+        b.grid(column=col, row=row)
         col += 1
         if col == 3:
             col = 0
             row += 1
+            
+    col = 0
+    row = 0
+
+    list_operators = ["*", "%", "-", "+", "=", "c"]
+    for operator in list_operators:
+        operator = tk.Button(frames[2], text=operator, width=15, height=3, command=insert_value)
+        operator.pack()
+
+    input_text = tk.Label(frames[0],width=40, height=3).pack()
+
+
+
+    
 
 gui()
+root.mainloop()
