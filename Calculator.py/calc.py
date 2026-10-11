@@ -7,12 +7,43 @@ root.title('КАЛЬКУЛЯТОР ТОП')
 root.configure(background='black')
 
 result = ''
+first_stage = 0
 
 
 def insert_value(value):
     global result
     result = result + f'{value}'
     input_text.config(text=result)
+
+
+def operations(value):
+    global result, first_stage
+    if first_stage == 0:
+        first_stage = int(result)
+        result = str(f"{first_stage} {value} ")
+        input_text.config(text=result)
+    elif value == '=':
+        one_digit = ''
+        two_digit = ''
+        operator = ''
+        step = 0
+        for o in result:
+            if o == '+' or o == '-':
+                operator = o
+
+        for i in result:
+            if i != operator:
+                one_digit += i
+                step += 1
+            else:
+                break
+
+        for j, k in enumerate(result):
+            if j > step:
+                if k != operator:
+                    two_digit += k
+        result = int(one_digit) + int(two_digit)
+        input_text.config(text=result)
 
 
 def init():
@@ -49,7 +80,7 @@ def gui():
 
     list_operators = ["*", "%", "-", "+", "=", "c"]
     for operator in list_operators:
-        operator = tk.Button(frames[2], text=operator, width=15, height=3, command= lambda val=button: insert_value(val))
+        operator = tk.Button(frames[2], text=operator, width=15, height=3, command= lambda val=operator: operations(val))
         operator.pack()
 
 
