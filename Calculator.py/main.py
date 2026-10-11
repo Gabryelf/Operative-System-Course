@@ -10,6 +10,7 @@ first_number = None
 operation = None
 new_number = True
 
+
 # ---------- дисплеи ----------
 text_input = tk.Label(root, text="0", anchor="e", font=("Arial", 14), bg="white")
 text_input.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=5, pady=(5, 0))
@@ -24,17 +25,23 @@ frame_operators = tk.Frame(root, bg="grey", width=100, height=180)
 frame_operators .grid(row=2, column=3, padx=4)
 
 
-def create_gui():
-    count = 1
-    b = tk.Button(frame_numbers, text=0, width=5, height=2)
-    b.grid(row=0, column=1)
-    for row in range(3):
-        for button in range(3):
-            b = tk.Button(frame_numbers, text=button+count, width=5, height=2)
-            b.grid(row=row+1, column=button)
-        count += 3
+def create_gui(number, cr):
+    b = tk.Button(frame_numbers, text=number, width=5, height=2, command=lambda: on_digit(number))
+    b.grid(row=cr, column=button)
 
+
+def on_digit(number):
+    global text_input
+    result = 0
+    result += int(number)
+    text_input.config(text=result)
+
+
+for row in range(3):
+    count_row = 0
+    for button in range(3):
+        create_gui(button+count_row, count_row+row)
+    count_row += 1
 
 # ---------- запуск ----------
-create_gui()
 root.mainloop()
