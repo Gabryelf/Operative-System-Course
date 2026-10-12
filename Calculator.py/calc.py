@@ -8,6 +8,10 @@ root.configure(background='black')
 
 result = ''
 first_stage = 0
+one_digit = ''
+two_digit = ''
+operator = ''
+input_text = None
 
 
 def insert_value(value):
@@ -17,18 +21,15 @@ def insert_value(value):
 
 
 def operations(value):
-    global result, first_stage
+    global result, first_stage, one_digit, two_digit, operator
     if first_stage == 0:
         first_stage = int(result)
         result = str(f"{first_stage} {value} ")
         input_text.config(text=result)
     elif value == '=':
-        one_digit = ''
-        two_digit = ''
-        operator = ''
         step = 0
         for o in result:
-            if o == '+' or o == '-':
+            if o in '+-*/':
                 operator = o
 
         for i in result:
@@ -42,8 +43,12 @@ def operations(value):
             if j > step:
                 if k != operator:
                     two_digit += k
-        result = int(one_digit) + int(two_digit)
+        result = apply_operator(operator, int(one_digit), int(two_digit))
         input_text.config(text=result)
+
+
+def apply_operator(o, a, b):
+    return {'+': a + b, '-': a - b, '*': a * b, '/': a / b}[o]
 
 
 def init():
@@ -78,10 +83,10 @@ def gui():
     col = 0
     row = 0
 
-    list_operators = ["*", "%", "-", "+", "=", "c"]
-    for operator in list_operators:
-        operator = tk.Button(frames[2], text=operator, width=15, height=3, command= lambda val=operator: operations(val))
-        operator.pack()
+    list_operators = ["*", "/", "-", "+", "=", "c"]
+    for op in list_operators:
+        op = tk.Button(frames[2], text=op, width=15, height=3, command= lambda val=op: operations(val))
+        op.pack()
 
 
 gui()
