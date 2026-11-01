@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск сотрудника</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        .card { border: 1px solid #ddd; padding: 1rem; border-radius: 8px; margin-top: 1rem; background: #f9f9f9; }
+        .error { color: red; margin-top: 1rem; }
+        input[type="text"] { padding: 0.5rem; width: 70%; }
+        button { padding: 0.5rem 1rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Поиск сотрудника</h1>
+
+    <form method="POST">
+        <input type="text" name="search_term" placeholder="Введите имя или должность" required>
+        <button type="submit">Найти</button>
+    </form>
+
+    {% if employee %}
+        <div class="card">
+            <h2>{{ employee.full_name }}</h2>
+            <p><strong>Должность:</strong> {{ employee.position }}</p>
+            <p><strong>Email:</strong> {{ employee.email }}</p>
+            <p><strong>Дата найма:</strong> {{ employee.hire_date }}</p>
+        </div>
+    {% endif %}
+</body>
+</html>
