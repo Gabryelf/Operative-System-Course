@@ -1,44 +1,19 @@
-from flask import Flask, render_template, request
-import mysql.connector
+import pymysql
+import pymysql.cursors
 
-app = Flask(__name__)
+con = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='admin',
+    database='default_db',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
 
-db_config = {
-    'user': 'root',
-    'password': 'admin',
-    'host': 'localhost',
-    'database': 'default_db'
-}
+with con:
+    cur = con.cursor()
+    cur.execute("SELECT VERSION()")
 
+    version = cur.fetchone()
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    employee = None
-    error = None
-
-    if request.method == 'POST':
-        search_term = request.form.get('search_term', '').strip()
-
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor(dictionary=True)
-
-        query = """
-                    SELECT full_name, position, email, hire_date 
-                    FROM employee_public
-                    WHERE full_name LIKE %s OR position LIKE %s
-                """
-
-        cursor.execute(query, (f'%{search_term}%', f'%{search_term}%'))
-        employee = cursor.fetchone()
-
-        cursor.close()
-        conn.close()
-
-        if not employee:
-            error = "Сотрудник не найден"
-
-    return render_template('index.html', employee=employee, error=error)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    print("Database version: {}".format(version[0]))
