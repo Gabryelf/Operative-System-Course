@@ -14,6 +14,7 @@ db_config = {
 @app.route('/', methods=['GET', 'POST'])
 def index():
     employee = None
+    error = None
 
     if request.method == 'POST':
         search_term = request.form.get('search_term', '').strip()
@@ -33,8 +34,11 @@ def index():
         cursor.close()
         conn.close()
 
-    return render_template('index.html', employee=employee)
+        if not employee:
+            error = "Сотрудник не найден"
+
+    return render_template('index.html', employee=employee, error=error)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

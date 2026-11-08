@@ -19,6 +19,10 @@
         <button type="submit">Найти</button>
     </form>
 
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
     {% if employee %}
         <div class="card">
             <h2>{{ employee.full_name }}</h2>
