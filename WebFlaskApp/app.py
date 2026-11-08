@@ -12,8 +12,9 @@ con = pymysql.connect(
 
 with con:
     cur = con.cursor()
-    cur.execute("SELECT VERSION()")
+    cur.execute("SELECT * FROM employees")
 
-    version = cur.fetchone()
+    rows = cur.fetchall()
 
-    print("Database version: {}".format(version[0]))
+    for row in rows:
+        print(row["id"], row["full_name"])
