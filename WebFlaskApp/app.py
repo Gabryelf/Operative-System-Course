@@ -1,20 +1,18 @@
-import pymysql
-import pymysql.cursors
+from flask import Flask, render_template
+from flask_sqlalchemy import SQLAlchemy
 
-con = pymysql.connect(
-    host='localhost',
-    user='root',
-    password='admin',
-    database='default_db',
-    charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor
-)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin@localhost/kollege'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-with con:
-    cur = con.cursor()
-    cur.execute("SELECT * FROM employees")
+db = SQLAlchemy(app)
 
-    rows = cur.fetchall()
 
-    for row in rows:
-        print(row["id"], row["full_name"])
+@app.route('/')
+def index():
+    groups = db.session.execute(db.text("SELECT * FROM student_groups")).fetchall()
+    return str(groups)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
