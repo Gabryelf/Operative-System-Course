@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ 'Изменить группу' if group else 'Новая группа' }}</title></head>
+<body>
+    <h1>{{ 'Изменить группу' if group else 'Новая группа' }}</h1>
+
+    <form method="POST">
+        <p>
+            <label>Название группы<br>
+            <input name="group_name" required maxlength="50"
+                   value="{{ group.group_name if group else '' }}">
+            </label>
+        </p>
+        <p>
+            <label>Специальность<br>
+            <input name="speciality" required maxlength="50"
+                   value="{{ group.speciality if group else '' }}">
+            </label>
+        </p>
+        <p>
+            <label>Количество студентов<br>
+            <input name="stud_count" type="number" min="0" max="255"
+                   value="{{ group.stud_count if group and group.stud_count is not none else '' }}">
+            </label>
+        </p>
+        <button type="submit">Сохранить</button>
+        <a href="{{ url_for('groups_list') }}">Отмена</a>
+    </form>
+</body>
+</html>

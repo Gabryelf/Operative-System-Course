@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head><title>Группы</title></head>
+<body>
+    <h1>Группы</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <p style="color: {{ 'red' if category == 'error' else 'green' }}">{{ msg }}</p>
+      {% endfor %}
+    {% endwith %}
+
+    <a href="{{ url_for('groups_create') }}">+ Добавить группу</a>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th><th>Название</th><th>Студентов</th><th>Специальность</th><th>Действия</th>
+        </tr>
+        {% for g in groups %}
+        <tr>
+            <td>{{ g.id }}</td>
+            <td>{{ g.group_name }}</td>
+            <td>{{ g.stud_count if g.stud_count is not none else '—' }}</td>
+            <td>{{ g.speciality }}</td>
+            <td>
+                <a href="{{ url_for('groups_edit', group_id=g.id) }}">Изменить</a>
+                <form method="POST" action="{{ url_for('groups_delete', group_id=g.id) }}"
+                      style="display:inline"
+                      onsubmit="return confirm('Удалить группу {{ g.group_name }}?')">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">Групп пока нет.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

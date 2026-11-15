@@ -12,10 +12,11 @@
     </style>
 </head>
 <body>
-    <h1>Поиск сотрудника</h1>
+    <h1>Добро пожаловать в журнал</h1>
 
     <form method="POST">
-        <input type="text" name="search_term" placeholder="Введите имя или должность" required>
+        <input type="text" name="user_name" placeholder="Введите имя" required>
+        <input type="text" name="user_pass" placeholder="Введите пароль" required>
         <button type="submit">Найти</button>
     </form>
 
@@ -23,13 +24,5 @@
         <p class="error">{{ error }}</p>
     {% endif %}
 
-    {% if employee %}
-        <div class="card">
-            <h2>{{ employee.full_name }}</h2>
-            <p><strong>Должность:</strong> {{ employee.position }}</p>
-            <p><strong>Email:</strong> {{ employee.email }}</p>
-            <p><strong>Дата найма:</strong> {{ employee.hire_date }}</p>
-        </div>
-    {% endif %}
 </body>
 </html>
