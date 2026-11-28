@@ -30,3 +30,14 @@ nav ul li a:hover { background: #377ba8; color: white; }
 .content form input[type=submit] { align-self: start; min-width: 10em; }
 .flash { background: #d1eaf9; border: 1px solid #7db3d7; padding: 0.5rem; margin: 1rem 0; }
 .error { background: #f9d1d4; border: 1px solid #d7727d; padding: 0.5rem; margin: 1rem 0; }
+
+.btn-like {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 5px;
+}
+.btn-like.active {
+  color: red; /* Или любой другой цвет активного лайка */
+}
