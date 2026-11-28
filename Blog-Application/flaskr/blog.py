@@ -13,7 +13,7 @@ bp = Blueprint('blog', __name__)
 def index():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, is_published'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -26,19 +26,32 @@ def create():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
+        is_published = 'is_published' in request.form
         error = None
 
         if not title:
             error = 'Title is required.'
+        elif len(title) < 3:
+            error = 'Title must be at least 3 characters long.'
+
+        if not body:
+            error = 'Body is required.' if error is None else error
+        elif len(body) < 10:
+            error = 'Body must be at least 10 characters long.' 
+
+        print("--- DEBUG ---")
+        print(f"Form keys: {request.form.keys()}")
+        print(f"Is checkbox present in form? {'is_published' in request.form}")
+        print(f"Value of is_published variable: {is_published}") 
 
         if error is not None:
             flash(error)
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
+                'INSERT INTO post (title, body, author_id, is_published)'
+                ' VALUES (?, ?, ?, ?)',
+                (title, body, g.user['id'], is_published)
             )
             db.commit()
             return redirect(url_for('blog.index'))
@@ -70,18 +83,28 @@ def update(id):
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
+        is_published = 'is_published' in request.form
+
         error = None
 
         if not title:
             error = 'Title is required.'
+        elif len(title) < 3:
+            error = 'Title must be at least 3 characters long.'
+
+        if not body:
+            error = 'Body is required.' if error is None else error
+        elif len(body) < 10:
+            error = 'Body must be at least 10 characters long.' 
+
 
         if error is not None:
             flash(error)
         else:
             db = get_db()
             db.execute(
-                'UPDATE post SET title = ?, body = ? WHERE id = ?',
-                (title, body, id)
+                'UPDATE post SET title = ?, body = ?, is_published = ? WHERE id = ?',
+                (title, body, is_published, id)
             )
             db.commit()
             return redirect(url_for('blog.index'))
