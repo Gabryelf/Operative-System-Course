@@ -10,6 +10,12 @@
     <input name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
     <label for="body">Body</label>
     <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+    <label>
+      <input type="checkbox" name="is_published" value="1" 
+             {% if post['is_published'] %}checked{% endif %}>
+      Publish this post
+    </label>
+
     <input type="submit" value="Save">
   </form>
 
