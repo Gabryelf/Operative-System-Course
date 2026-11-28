@@ -11,5 +11,10 @@
     <label for="body">Body</label>
     <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
     <input type="submit" value="Save">
+    <label>
+      <input type="checkbox" name="is_published" value="1">
+      Publish this post
+    </label>
+
   </form>
 {% endblock %}
