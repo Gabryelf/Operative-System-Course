@@ -11,12 +11,23 @@ bp = Blueprint('blog', __name__)
 
 @bp.route('/')
 def index():
+    user_id = g.user['id'] if g.user else None
+    
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username, is_published'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' ORDER BY created DESC'
+        '''
+        SELECT p.id, p.title, p.body, p.created, p.author_id, is_published, u.username,
+               COALESCE(likes.total, 0) AS likes_count,
+               EXISTS(SELECT 1 FROM like l WHERE l.user_id = ? AND l.post_id = p.id) AS is_liked_by_me
+        FROM post p
+        JOIN user u ON p.author_id = u.id
+        LEFT JOIN (SELECT post_id, COUNT(*) as total FROM like GROUP BY post_id) likes 
+            ON p.id = likes.post_id
+        ORDER BY p.created DESC
+        ''',
+        (user_id,)
     ).fetchall()
+    
     return render_template('blog/index.html', posts=posts)
 
 
@@ -120,3 +131,49 @@ def delete(id):
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
+
+def get_likes_count(post_id):
+    db = get_db()
+    row = db.execute(
+        'SELECT COUNT(*) AS count FROM like WHERE post_id = ?',
+        (post_id,)
+    ).fetchone()
+    return row['count']
+
+def is_liked(user_id, post_id):
+    if user_id is None:
+        return False
+    db = get_db()
+    row = db.execute(
+        'SELECT id FROM like WHERE user_id = ? AND post_id = ?',
+        (user_id, post_id)
+    ).fetchone()
+    return row is not None
+
+@bp.route('/<int:id>/like', methods=('POST',))
+@login_required
+def like(id):
+    post = get_post(id)
+    db = get_db()
+    
+    try:
+        db.execute(
+            'INSERT INTO like (user_id, post_id) VALUES (?, ?)',
+            (g.user['id'], id)
+        )
+        db.commit()
+    except sqlite3.IntegrityError:
+        pass 
+        
+    return redirect(url_for('blog.index'))
+
+@bp.route('/<int:id>/unlike', methods=('POST',))
+@login_required
+def unlike(id):
+    post = get_post(id)
+    db = get_db()
+    db.execute('DELETE FROM like WHERE user_id = ? AND post_id = ?', (g.user['id'], id))
+    db.commit()
+    return redirect(url_for('blog.index'))
+
+
