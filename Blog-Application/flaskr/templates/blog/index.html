@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+  <!-- ВОТ ЗДЕСЬ НАЧИНАЕТСЯ ЦИКЛ -->
   {% for post in posts %}
     <article class="post">
       <header>
@@ -16,17 +17,34 @@
           <div class="about">
               by {{ post['username'] }} on {{ post['created'].strftime('%d %B %Y, %H:%M') }}
           </div>
-
         </div>
-        {% if g.user['id'] == post['author_id'] %}
+
+        {% if g.user and g.user['id'] == post['author_id'] %}
           <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
         {% endif %}
       </header>
+      
       <p class="body">{{ post['body'] }}</p>
+
+      <!-- СТАТУС (теперь post определен, потому что мы внутри цикла) -->
       <span class="status">
         {% if post['is_published'] %}Published{% else %}Draft{% endif %}
       </span>
+
+      <!-- ЛАЙКИ (тоже внутри цикла) -->
+      <div class="likes">
+        {% if post['is_liked_by_me'] %}
+          <form action="{{ url_for('blog.unlike', id=post['id']) }}" method="post" style="display:inline;">
+            <button type="submit" class="btn-like active">❤️ {{ post['likes_count'] }}</button>
+          </form>
+        {% else %}
+          <form action="{{ url_for('blog.like', id=post['id']) }}" method="post" style="display:inline;">
+            <button type="submit" class="btn-like">🤍 {{ post['likes_count'] }}</button>
+          </form>
+        {% endif %}
+      </div>
     </article>
+
     {% if not loop.last %}
       <hr>
     {% endif %}
